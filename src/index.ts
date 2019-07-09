@@ -1,11 +1,15 @@
-import express, { Request, Response } from 'express'
+import express from 'express'
+import { router } from './routes'
+import bodyParser from 'body-parser'
 
 const app = express()
 
-app.get('/', function (req: Request, res: Response) {
-	res.send(`Hello, world`)
-})
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(router)
 
-app.listen(3000, function printListening() {
-	console.log(`Listening on port 3000`)
+
+const PORT = 3000
+
+app.listen(PORT, function printListening() {
+	console.log(`Listening at http://localhost:${PORT}`)
 })
