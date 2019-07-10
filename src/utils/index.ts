@@ -1,3 +1,3 @@
 export { styleInline } from './styleInline'
-export { makeLink, makeLinks } from './makeLinks'
+export { makeAnchor } from './makeAnchor'
 export { makeInput } from './makeInput'

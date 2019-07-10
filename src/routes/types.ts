@@ -1,7 +1,6 @@
-import { Router, RequestHandler, Request, Response } from 'express'
+import { Router, RequestHandler, Request, Response, NextFunction } from 'express'
 
-
-export { Router, RequestHandler, Request, Response }
+export { Router, RequestHandler, Request, Response, NextFunction }
 
 export interface RequestWithBody extends Request {
 	body: {
@@ -14,23 +13,13 @@ export interface CookieSessionObject extends CookieSessionInterfaces.CookieSessi
 	isAuthenticated?: boolean
 }
 
-export interface RouterInstance extends Router {
-	[routerMethod: string]: any
-	addConfig?: (config: RouteConfig) => this
-}
-
-export interface RouteConfig {
-	[method: string]: {
-		path: string
-		handler: RequestHandler
-	}
-}
-
-export type RouteRegister = {
-	[routeKey: string]: any
-}
+export type RouteRegister = Map<string, RouteRegistration>
 
 export interface RouteRegistration {
 	label: string
 	path: string
+}
+
+export interface HasRegistration {
+	registration: RouteRegistration
 }

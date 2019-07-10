@@ -1,28 +1,27 @@
 import { router } from './router'
-import { root as rootConfig } from './root'
-import { login as loginConfig } from './login'
-import { logout as logoutConfig } from './logout'
-import { RouteRegister } from './types'
+import { routeRegister, register } from './routeRegister'
+import * as index from './root'
+import * as login from './login'
+import * as logout from './logout'
+import * as guarded from './guarded'
 
-const routeRegister: RouteRegister = {
-	root: {
-		label: `Home`,
-		path: `/`
-	},
-	login: {
-		label: `Login`,
-		path: `/login`
-	},
-	logout: {
-		label: `Logout`,
-		path: `/logout`,
-	}
-}
 
-if (router.addConfig) {
-	router.addConfig(rootConfig)
-	router.addConfig(loginConfig)
-	router.addConfig(logoutConfig)
-}
+// INDEX
+register(index)
+router.get(index.path, index.get)
 
-export { router, routeRegister }
+// LOGIN
+register(login)
+router.get(login.path, login.get)
+router.post(login.path, login.post)
+
+// LOGOUT
+register(logout)
+router.get(logout.path, logout.get)
+
+// GUARDED
+register(guarded)
+router.get(guarded.path, guarded.requireAuth, guarded.next)
+
+
+export { router, routeRegister as routes }

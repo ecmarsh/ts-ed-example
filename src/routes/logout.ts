@@ -1,13 +1,14 @@
-import { RouteConfig, Request, Response } from './types'
+import { routes } from '.'
+import { Request, Response } from './types'
 
-export const logout: RouteConfig = {
-	get: {
-		path: `/logout`,
-		handler,
-	}
+export const path = '/logout'
+
+export const registration = {
+	label: 'Logout',
+	path,
 }
 
-function handler(request: Request, response: Response) {
-	request.session = undefined
-	response.redirect('/login')
+export function get(req: Request, res: Response) {
+	req.session = undefined
+	res.redirect(routes.get('login').path)
 }

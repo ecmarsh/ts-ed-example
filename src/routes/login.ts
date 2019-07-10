@@ -1,20 +1,14 @@
 import { makeInput, styleInline } from '../utils'
-import { RouteConfig, Request, Response, RequestWithBody, CookieSessionObject } from './types'
+import { Request, Response, RequestWithBody, CookieSessionObject } from './types'
 
-const path = `/login`
+export const path = `/login`
 
-export const login: RouteConfig = {
-	get: {
-		path,
-		handler: getLogin
-	},
-	post: {
-		path,
-		handler: postLogin
-	}
+export const registration = {
+	label: 'Login',
+	path,
 }
 
-function getLogin(request: Request, response: Response) {
+export function get(req: Request, res: Response) {
 	const loginForm = `
 		<form method="POST">
 			<h1>Login</h1>
@@ -26,24 +20,23 @@ function getLogin(request: Request, response: Response) {
 		</form>
 	`
 
-	response.send(loginForm)
+	res.send(loginForm)
 }
 
-function postLogin(request: RequestWithBody, response: Response) {
-	const { email, password } = request.body
+export function post(req: RequestWithBody, res: Response) {
+	const { email, password } = req.body
 	if (email && password) {
 		const authenticatedSession: CookieSessionObject = {
 			isAuthenticated: true
 		}
 
-		request.session = authenticatedSession
-
-		response.redirect(`/`)
+		req.session = authenticatedSession
+		res.redirect(`/guarded`)
 	}
 	else {
 		const colorRed = styleInline('color')('red')
 		const message = `Must enter email and password!`
 
-		response.send(`<p ${colorRed}>${message}</p>`)
+		res.send(`<p ${colorRed}>${message}</p>`)
 	}
 }

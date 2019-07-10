@@ -1,47 +1,31 @@
-import { routeRegister } from '.'
-import { makeLink, makeLinks } from '../utils'
-import { RouteRegister, RouteRegistration, RouteConfig, Request, Response } from './types'
-import { pathToFileURL } from 'url';
+import { routes } from '.'
+import { makeAnchor } from '../utils'
+import { Request, Response } from './types'
 
-export const root: RouteConfig = {
-	get: {
-		path: '/',
-		handler,
-	},
+export const path = `/`
+
+export const registration = {
+	label: 'Home',
+	path,
 }
 
-function handler(request: Request, response: Response) {
-	const { session } = request
+export function get(req: Request, res: Response) {
+	const { session } = req
 	const isAuthenticated: boolean = session && session.isAuthenticated
 
-	let res: string
+	let response: string
 	if (isAuthenticated) {
-		res = `
+		response = `
 			<div>
 				<p>Logged in</p>
-				${makeLink(routeRegister['logout'])}
+				${makeAnchor(routes.get('logout'))}
 			</div>
 		`
 	}
 	else {
-		const routes = parseRegister(routeRegister, ['/logout'])
-		const nav = `<nav>${makeLinks(routes)}</nav>`
-		res = nav
+		response = makeAnchor(routes.get('login'))
 	}
 
 
-	response.send(res)
-}
-
-function parseRegister(routeRegister: RouteRegister, pathFilters?: string[]): RouteRegistration[] {
-	const routeRegistrations: RouteRegistration[] = []
-
-	for (const value of Object.values(routeRegister)) {
-		const isInFilters = ~value.path.indexOf(filters)
-		if (!isInFilters) {
-			routeRegistrations.push(value)
-		}
-	}
-
-	return routeRegistrations
+	res.send(response)
 }
