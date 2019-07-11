@@ -13,13 +13,24 @@ export interface CookieSessionObject extends CookieSessionInterfaces.CookieSessi
 	isAuthenticated?: boolean
 }
 
-export type RouteRegister = Map<string, RouteRegistration>
+export interface RouteRegister {
+	get(key: string): RouteRegistration
+	set(key: string, value: RouteRegistration): RouteMap
+	register(registerable: Registerable): RouteMap
+	delete(key: string): boolean
+	clear(): void
+	forEach(callback: RoutesCallback, thisArg?: any): void
+}
+
+export type RouteMap = Map<string, RouteRegistration>
 
 export interface RouteRegistration {
 	label: string
 	path: string
 }
 
-export interface HasRegistration {
+export interface Registerable {
 	registration: RouteRegistration
 }
+
+export type RoutesCallback = (value: RouteRegistration, key: string, map: RouteMap) => void
