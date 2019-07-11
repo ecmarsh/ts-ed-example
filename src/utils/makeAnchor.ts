@@ -1,8 +1,10 @@
-interface AnchorDescriptor {
+type AnchorDescriptor = {
 	label: string,
 	path: string,
 }
 
-export function makeAnchor({ label, path }: AnchorDescriptor) {
+type MakeAnchor = ({ label, path }: AnchorDescriptor) => string
+
+export const makeAnchor: MakeAnchor = ({ label, path }) => {
 	return `<a href="${path}">${label}</a>`
 }

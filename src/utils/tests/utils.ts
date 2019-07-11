@@ -1,0 +1,1 @@
+export const clearDocument = () => document.body.innerHTML = ''

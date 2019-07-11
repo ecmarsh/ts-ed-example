@@ -6,7 +6,7 @@ export function makeInput(name: string, type?: string): string {
 
 	const markup = `
 				<div>
-					<label for=${name} ${capitalize}>${name}</label>
+					<label for="${name}" ${capitalize}>${name}</label>
 					<input type="${type || name}" name="${name}" />
 				</div>
 			`
