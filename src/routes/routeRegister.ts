@@ -1,45 +1,40 @@
 import {
-	RouteMap,
-	RouteRegister,
-	RouteRegistration,
-	Registerable,
-	RoutesCallback
+  RouteMap,
+  RouteRegister,
+  RouteRegistration,
+  Registerable,
 } from './types'
 
 
 class RoutesProxy implements RouteRegister {
 
-	private map: RouteMap = new Map()
+  private map: RouteMap = new Map()
 
-	static defaultRegistration: RouteRegistration = {
-		label: '',
-		path: '/'
-	}
+  private static defaultRegistration: RouteRegistration = {
+    label: '',
+    path: '/'
+  }
 
-	get = (key: string) => {
-		return this.map.get(key) || RoutesProxy.defaultRegistration
-	}
+  public get = (key: string) => {
+    return this.map.get(key) || RoutesProxy.defaultRegistration
+  }
 
-	set = (key: string, value: RouteRegistration): RouteMap => {
-		if (this.map.has(key)) {
-			this.delete(key)
-		}
+  public set = (key: string, value: RouteRegistration): RouteMap => {
+    if (this.map.has(key)) {
+      this.delete(key)
+    }
 
-		return this.map.set(key, value)
-	}
+    return this.map.set(key, value)
+  }
 
-	register = ({ registration: { label, path } }: Registerable) => {
-		const key = label.toLowerCase()
-		return this.set(key, { label, path })
-	}
+  public register = ({ registration: { label, path } }: Registerable) => {
+    const key = label.toLowerCase()
+    return this.set(key, { label, path })
+  }
 
-	forEach = (callback: RoutesCallback, thisArg?: any): void => {
-		this.map.forEach(callback, thisArg)
-	}
+  public clear = () => this.map.clear()
 
-	clear = () => this.map.clear()
-
-	delete = (key: string): boolean => this.map.delete(key)
+  public delete = (key: string): boolean => this.map.delete(key)
 }
 
 export const routeRegister: RouteRegister = new RoutesProxy()
