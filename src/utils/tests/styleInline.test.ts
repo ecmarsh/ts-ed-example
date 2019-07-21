@@ -1,5 +1,5 @@
 import { styleInline } from '..'
-import { clearDocument } from './utils'
+import { clearDocument } from '../../tests/testUtils'
 
 afterAll(() => clearDocument())
 

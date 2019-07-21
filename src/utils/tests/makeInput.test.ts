@@ -1,5 +1,5 @@
 import { makeInput } from '..'
-import { clearDocument } from './utils'
+import { clearDocument } from '../../tests/testUtils'
 
 
 beforeEach(() => clearDocument())

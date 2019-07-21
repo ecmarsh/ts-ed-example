@@ -1,5 +1,5 @@
 import { makeAnchor } from '..'
-import { clearDocument } from './utils'
+import { clearDocument } from '../../tests/testUtils'
 
 
 beforeAll(() => document.body.innerHTML = makeAnchor(route))

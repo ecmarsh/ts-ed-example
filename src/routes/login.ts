@@ -1,15 +1,15 @@
-import { makeInput, styleInline } from '../utils'
+import { makeInput, styleInline, minify } from '../utils'
 import { Request, Response, RequestWithBody, CookieSessionObject } from './types'
 
 export const path = `/login`
 
 export const registration = {
-	label: 'Login',
-	path,
+  label: 'Login',
+  path,
 }
 
 export function get(req: Request, res: Response) {
-	const loginForm = `
+  const loginForm = `
 		<form method="POST">
 			<h1>Login</h1>
 			<fieldset>
@@ -20,23 +20,23 @@ export function get(req: Request, res: Response) {
 		</form>
 	`
 
-	res.send(loginForm)
+  res.send(minify(loginForm))
 }
 
-export function post(req: RequestWithBody, res: Response) {
-	const { email, password } = req.body
-	if (email && password) {
-		const authenticatedSession: CookieSessionObject = {
-			isAuthenticated: true
-		}
+export async function post(req: RequestWithBody, res: Response) {
+  const { email, password } = req.body
+  if (email && password) {
+    const authenticatedSession: CookieSessionObject = {
+      isAuthenticated: true
+    }
 
-		req.session = authenticatedSession
-		res.redirect(`/guarded`)
-	}
-	else {
-		const colorRed = styleInline('color')('red')
-		const message = `Must enter email and password!`
+    req.session = authenticatedSession
+    res.redirect(`/guarded`)
+  }
+  else {
+    const colorRed = styleInline('color')('red')
+    const message = `Must enter email and password!`
 
-		res.send(`<p ${colorRed}>${message}</p>`)
-	}
+    res.send(`<p ${colorRed}>${message}</p>`)
+  }
 }

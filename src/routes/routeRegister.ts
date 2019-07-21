@@ -7,20 +7,17 @@ import {
 } from './types'
 
 
-class Routes implements RouteRegister {
+class RoutesProxy implements RouteRegister {
+
+	private map: RouteMap = new Map()
+
 	static defaultRegistration: RouteRegistration = {
 		label: '',
 		path: '/'
 	}
 
-	private map: RouteMap
-
-	constructor() {
-		this.map = new Map()
-	}
-
 	get = (key: string) => {
-		return this.map.get(key) || Routes.defaultRegistration
+		return this.map.get(key) || RoutesProxy.defaultRegistration
 	}
 
 	set = (key: string, value: RouteRegistration): RouteMap => {
@@ -45,4 +42,4 @@ class Routes implements RouteRegister {
 	delete = (key: string): boolean => this.map.delete(key)
 }
 
-export const routeRegister: RouteRegister = new Routes()
+export const routeRegister: RouteRegister = new RoutesProxy()
