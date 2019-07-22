@@ -1,7 +1,7 @@
 import 'reflect-metadata' // Introduces 'Reflect' into global scope
 
 import { AppRouter } from '../AppRouter'
-import { Decorator, HttpMethod, MetaKeys, RequestHandler } from './types'
+import { Decorator, HttpMethod, MetaKeys, RequestHandler, RouteHandlerDescriptor } from './types'
 import { styleInline } from '../utils'
 
 /**
@@ -23,7 +23,7 @@ export { HttpMethod }
  * @param [httpMethod] The method for the handler. Defaults to `GET`.
  */
 export function routeHandler(path: string = '', reqMethod: HttpMethod): Decorator {
-  return function defineHandlerMetadata(target, key, desc) {
+  return function defineHandlerMetadata(target, key, desc: RouteHandlerDescriptor) {
     Reflect.defineMetadata(MetaKeys.Path, path, target, key)
     Reflect.defineMetadata(MetaKeys.ReqMethod, reqMethod, target, key)
   }
