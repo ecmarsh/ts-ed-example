@@ -10,9 +10,24 @@ describe('Root', function testIndexPath() {
     expect(res.status).toBe(200)
   })
 
-  test('Shows login link', async () => {
+  test('Login link for new user', async () => {
     const res = await request(app).get('/')
     expect(res.text).toMatch(/^\<a.+(Login)+\<\/a>$/)
+  })
+
+  test('Logout link for returning user', async () => {
+    // Persists connection. Thus, cookies.
+    // SuperTest by default closes connections after requests.
+    // http://visionmedia.github.io/superagent/#agents-for-global-state
+    // https://nodejs.org/dist/latest-v12.x/docs/api/http.html#http_class_http_agent
+    const agent = request.agent(app)
+    const res = await agent.post('/login')
+      .type('form')
+      .send({ email: 'email@email.com' })
+      .send({ password: 'password' })
+      .then(() => agent.get('/'))
+
+    expect(res.text).toMatch(/\<a.*logout.*\<\/a>/i)
   })
 })
 
@@ -67,7 +82,6 @@ describe('Login', function testLoginRoute() {
   })
 
   test('Active session on login page', async () => {
-    // See "Allow authenticated user" test comment on agents
     const agent = request.agent(app)
     const res = await agent.post('/login')
       .type('form')
@@ -90,10 +104,6 @@ describe('Protected route', function testProtectedRoute() {
   })
 
   test('Allow authenticated user', async () => {
-    // Persists connection. Thus, cookies.
-    // SuperTest by default closes connections after requests.
-    // http://visionmedia.github.io/superagent/#agents-for-global-state
-    // https://nodejs.org/dist/latest-v12.x/docs/api/http.html#http_class_http_agent
     const agent = request.agent(app)
 
     // 1. Send the form data and proceed to protected route.
@@ -112,7 +122,7 @@ describe('Protected route', function testProtectedRoute() {
 
 describe('Logout', function testLogout() {
   test('Unauthenticate session', async () => {
-    // 1. Set up app with agent (See "allow auth user" test above)
+    // 1. Set up app with persistent connection
     const agent = request.agent(app)
 
     // 2a. Login. We need something to log out of.
@@ -124,6 +134,7 @@ describe('Logout', function testLogout() {
     // 2b. Assert logged in by checking protected route.
     let guarded = await agent.get('/guarded')
     expect(guarded.status).toEqual(200)
+    expect(res.text).toMatch(/welcome.*user/i)
 
     // 3. Do the logout.
     const logout = await agent.get('/logout')
@@ -140,6 +151,7 @@ describe('Logout', function testLogout() {
 /**
  * TODO
  * [X] Index route shows login
+ * [X] Index route shows logout
  * [X] Login shows form
  * [X] Form has email and password
  * [X] Valid login sets cookies

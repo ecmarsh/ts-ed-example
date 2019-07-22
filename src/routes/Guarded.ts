@@ -2,27 +2,6 @@ import { controller, routeHandler, use, HttpMethod } from '../decorators'
 import { makeAnchor, minify, styleInline } from '../utils'
 import { Request, Response, NextFunction } from './types'
 
-// export const path = `/guarded`
-
-// export const registration = {
-//   label: 'Guarded',
-//   path,
-// }
-
-// export function next(req: Request, res: Response) {
-//   const guardedMessage = `Welcome to guarded route, logged in user!`
-//   const bold = styleInline('font-weight')('bold')
-//   const logoutLink = makeAnchor({ label: 'Logout', path: '/logout' })
-
-//   const guardedPageMarkup = `
-// 		<div>
-// 			<p ${bold}>${guardedMessage}</p>
-// 			${logoutLink}
-// 		</div>
-// 	`
-
-//   res.send(minify(guardedPageMarkup))
-// }
 
 function requireAuth(req: Request, res: Response, next: NextFunction) {
   const isAuthenticated: boolean = req.session && req.session.isAuthenticated

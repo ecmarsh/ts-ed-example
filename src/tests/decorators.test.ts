@@ -121,5 +121,5 @@ describe('Decorators', function testDecorators() {
  * [X] Use middleware
  * [X] Validates correct data
  * [X] Validate sends error
- * [] Property descriptor parameter
+ * [X] Property descriptor parameter
  */

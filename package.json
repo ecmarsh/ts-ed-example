@@ -57,7 +57,7 @@
       "^.+\\.tsx?$": "ts-jest"
     },
     "collectCoverageFrom": [
-      "src/*.ts"
+      "src/**/*"
     ]
   }
 }
