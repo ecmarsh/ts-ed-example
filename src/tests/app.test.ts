@@ -63,7 +63,22 @@ describe('Login', function testLoginRoute() {
       .send('password=')
 
     // Should recieve HTML markup referencing invalid input data.
-    expect(res.text).toMatch(/must enter email.*password/i)
+    expect(res.text).toMatch(/must provide.*[(email) | (password)]/i)
+  })
+
+  test('Active session on login page', async () => {
+    // See "Allow authenticated user" test comment on agents
+    const agent = request.agent(app)
+    const res = await agent.post('/login')
+      .type('form')
+      .send({ email: 'email@email.com' })
+      .send({ password: 'password' })
+      .then(() => agent.get('/login'))
+
+    // With an active user, we should see a
+    // login confirmation rather than the login form.
+    expect(res.text).toMatch(/logged in/i)
+    expect(res.text).toMatch(/[[^(form)]/i)
   })
 })
 

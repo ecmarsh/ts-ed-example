@@ -1,15 +1,15 @@
 /** Also defines a middleware. */
-export { RequestHandler } from 'express'
+import { RequestHandler } from 'express'
 
 /** The function a decorator factory returns. */
-export type Decorator = (
+type Decorator = (
   target: any,
   key: string,
   desc: PropertyDescriptor
 ) => void
 
 /** Reflect-metadata keys. */
-export enum MetaKeys {
+enum MetaKeys {
   Path = 'path',
   ReqMethod = 'reqMethod',
   Middleware = 'middleware',
@@ -17,7 +17,7 @@ export enum MetaKeys {
 }
 
 /** Allowed parameters for `routeHandler` method. */
-export enum HttpMethod {
+enum HttpMethod {
   All = 'all',
   Get = 'get',
   Post = 'post',
@@ -25,3 +25,5 @@ export enum HttpMethod {
   Put = 'put',
   Patch = 'patch'
 }
+
+export { RequestHandler, Decorator, MetaKeys, HttpMethod }

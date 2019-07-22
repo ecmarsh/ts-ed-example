@@ -1,11 +1,12 @@
 import request from 'supertest'
 import express from 'express'
-import bodyParser from 'body-parser'
-import cookieSession from 'cookie-session'
 
-import { controller, routeHandler, validate, use, HttpMethod } from '../decorators'
 
 describe('Decorators', function testDecorators() {
+  const bodyParser = require('body-parser')
+  const cookieSession = require('cookie-session')
+  const { controller, routeHandler, validate, use, HttpMethod } = require('../decorators')
+
   /**
    * A clean router instance to override controller.
    * `app.use(router)` after setting up the test case.
@@ -25,7 +26,7 @@ describe('Decorators', function testDecorators() {
     router = undefined
   })
 
-  test('@routeHandler(path, method)', async () => {
+  test('@routeHandler(path, method)', async function testRouteHandler() {
     @controller('', router)
     class TestRouteHandler {
       static text = 'Route binded!'
@@ -40,7 +41,7 @@ describe('Decorators', function testDecorators() {
     expect(res.text).toMatch(TestRouteHandler.text)
   })
 
-  test('@controller(prefixRoute?, routerOveride?)', async () => {
+  test('@controller(prefixRoute?, routerOveride?)', async function testController() {
     @controller('/root', router)
     class TestController {
       static text = 'Controller controlled!'
@@ -56,8 +57,9 @@ describe('Decorators', function testDecorators() {
   })
 
 
-  test('@use(middleware)', async () => {
+  test('@use(middleware)', async function testUseDecorator() {
     let wasRun = false
+
     function middleware(req: any, res: any, next: any) {
       wasRun = true
       next()
@@ -66,7 +68,7 @@ describe('Decorators', function testDecorators() {
     @controller('', router)
     class TestUse {
       @use(middleware)
-      @routeHandler('/')
+      @routeHandler('/', HttpMethod.Get)
       getTest(req: any, res: any, next: any) {
         res.send('Should have ran middleware')
       }
@@ -79,7 +81,7 @@ describe('Decorators', function testDecorators() {
     expect(wasRun).toBe(true)
   })
 
-  test('@validate(...dataProps)', async () => {
+  test('@validate(...dataProps)', async function testValidator() {
     @controller('', router)
     class TestValidate {
       static path = '/form'

@@ -1,4 +1,4 @@
-import { routes } from '.'
+import { controller, routeHandler, HttpMethod } from '../decorators'
 import { makeAnchor, minify } from '../utils'
 import { Request, Response } from './types'
 
@@ -18,14 +18,31 @@ export function get(req: Request, res: Response) {
     response = `
 			<div>
 				<p>Logged in</p>
-				${makeAnchor(routes.get('logout'))}
+				${makeAnchor({ label: 'Logout', path: '/logout' })}
 			</div>
 		`
   }
   else {
-    response = makeAnchor(routes.get('login'))
+    response = makeAnchor({ label: 'Login', path: '/Login' })
   }
 
 
   res.send(minify(response))
+}
+
+@controller()
+export class Root {
+  private static indexView = () => `
+			<div>
+				<p>Logged in</p>
+				${makeAnchor({ label: 'Logout', path: '/logout' })}
+			</div>
+    `
+
+  @routeHandler('/', 'get' as HttpMethod)
+  private getIndex(req: Request, res: Response) {
+    req.session && req.session.isAuthenticated
+      ? res.send(minify(Root.indexView()))
+      : res.send(makeAnchor({ label: 'Login', path: '/Login' }))
+  }
 }
