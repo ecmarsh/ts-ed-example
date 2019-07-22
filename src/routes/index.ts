@@ -33,7 +33,7 @@ export { AuthRouter, routes }
 /**
  * Method decorator function.
  */
-type MethodDec = (
+type Decorated = (
   target: any,
   key: string,
   desc: PropertyDescriptor
@@ -46,7 +46,8 @@ import { Request, Response } from './types'
 
 enum MetaKeys {
   Path = 'path',
-  ReqMethod = 'reqMethod'
+  ReqMethod = 'reqMethod',
+  Middleware = 'middleware'
 }
 
 enum HttpMethod {
@@ -64,7 +65,7 @@ enum HttpMethod {
  * @param {string} [path] The path endpoint, appended to controller `pathPrefix.`
  * @param [httpMethod] The method for the handler. Defaults to `GET`.
  */
-function routeHandler(path: string, reqMethod: HttpMethod = HttpMethod.Get): MethodDec {
+function routeHandler(path: string, reqMethod: HttpMethod = HttpMethod.Get): Decorated {
   return function defineHandlerMetadata(target, key, desc) {
     Reflect.defineMetadata(MetaKeys.Path, path, target, key)
     Reflect.defineMetadata(MetaKeys.ReqMethod, reqMethod, target, key)
@@ -83,14 +84,35 @@ function controller(pathPrefix: string = '', router = controllerRouter) {
   return function setupRouter(target: Function) {
     const { prototype } = target
     for (const prop in prototype) {
-      const path = Reflect.getMetadata(MetaKeys.Path, prototype, prop)
-      const method: HttpMethod = Reflect.getMetadata(MetaKeys.ReqMethod, prototype, prop)
+      const path = Reflect.getMetadata(MetaKeys.Path, prototype, prop),
+        method: HttpMethod = Reflect.getMetadata(MetaKeys.ReqMethod, prototype, prop),
+        middlewares = Reflect.getMetadata(MetaKeys.Middleware, prototype, prop) || []
 
       if (path && method) {
         const reqHandler = prototype[prop]
-        router[method](pathPrefix + path, reqHandler)
+        router[method](pathPrefix + path, ...middlewares, reqHandler)
       }
     }
+  }
+}
+
+/**
+ * Use
+ */
+function use(middleware: Express.RequestHandler): Decorated {
+  return function addMiddleware(target, key, string) {
+    const middlewares = Reflect.getMetadata(
+      MetaKeys.Middleware,
+      target,
+      key
+    ) || []
+
+    Reflect.defineMetadata(
+      MetaKeys.Middleware,
+      [...middlewares, middleware],
+      target,
+      key
+    )
   }
 }
 
@@ -103,4 +125,11 @@ class LoginController {
 }
 
 
-export { LoginController, controller, controllerRouter, routeHandler }
+export {
+  LoginController,
+  HttpMethod,
+  controller,
+  controllerRouter,
+  routeHandler,
+  use,
+}

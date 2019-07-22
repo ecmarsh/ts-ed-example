@@ -125,48 +125,77 @@ describe('Logout', function testLogout() {
 
 describe('Decorators', function testDecorators() {
   let app: any
+  /** A clean router instance for each test. `request(app).use(router)` */
   let router: any
 
   beforeEach(() => {
     const express = require('express')
     app = express()
-
+    router = express.Router()
     const bodyParser = require('body-parser')
     const cookieSession = require('cookie-session')
-
     app.use(bodyParser.urlencoded({ extended: true }))
-    app.use(cookieSession({ keys: ['secret', 'keys'] }))
-
-    const { controllerRouter } = require('../routes')
-    router = controllerRouter
-  })
-
-  test('Controller Class Decorator', async () => {
-    app.use(router)
-    const res = await request(app).get('/auth/login')
-    expect(res.text).toMatch(/\<form.*POST.*/)
+    app.use(cookieSession({ keys: ['secret'] }))
   })
 
   test('@routeHandler(path, method)', async () => {
-    const { Router } = require('express')
     const { controller, routeHandler } = require('../routes')
 
-    const testRouter = Router()
-
-    @controller('', testRouter)
-    class Test {
-      static response = 'Route binded!'
-
+    @controller('', router)
+    class TestRouteHandler {
+      static text = 'Route binded!'
       @routeHandler('/test', 'get')
-      getTest(req: any, res: any) {
-        res.send(Test.response)
+      getText(req: any, res: any) {
+        res.send(TestRouteHandler.text)
       }
     }
 
-    app.use(testRouter)
-
+    app.use(router)
     const res = await request(app).get('/test')
-    expect(res.text).toMatch(Test.response)
+    expect(res.text).toMatch(TestRouteHandler.text)
+  })
+
+  test('@controller(prefixRoute?, routerOveride?)', async () => {
+    const { controller, routeHandler } = require('../routes')
+
+    @controller('/root', router)
+    class TestController {
+      static text = 'Controller controlled!'
+      @routeHandler('/auth', 'get')
+      getText(req: any, res: any) {
+        res.send(TestController.text)
+      }
+    }
+
+    app.use(router)
+    const res = await request(app).get('/root/auth')
+    expect(res.text).toMatch(TestController.text)
+  })
+
+
+  test('@use(middleware)', async () => {
+    const { controller, routeHandler, use } = require('../routes')
+
+    let wasRun = false
+    function middleware(req: any, res: any, next: any) {
+      wasRun = true
+      next()
+    }
+
+    @controller('', router)
+    class TestUse {
+      @use(middleware)
+      @routeHandler('/', 'get')
+      getTest(req: any, res: any, next: any) {
+        res.send('Should have ran middleware')
+      }
+    }
+
+    app.use(router)
+
+    expect(wasRun).toBe(false)
+    const res = await request(app).get('/')
+    expect(wasRun).toBe(true)
   })
 })
 
@@ -186,6 +215,7 @@ describe('Decorators', function testDecorators() {
  * [X] Metadata
  * [X] Controller Class decorator
  * [x] Http method decorator
+ * [X] Use middleware
  * [] Auth decorator
  * [] Validate req body decorator
  */
