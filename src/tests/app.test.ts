@@ -121,21 +121,25 @@ describe('Logout', function testLogout() {
   })
 })
 
-//import { LoginController, post, get, use, requireAuth, validateBody } from '../routes'
 
 describe('Decorators', function testDecorators() {
   let app: any
-  /** A clean router instance for each test. `request(app).use(router)` */
+  /** A clean router instance for each test. `app.use(router)` */
   let router: any
 
   beforeEach(() => {
     const express = require('express')
-    app = express()
-    router = express.Router()
     const bodyParser = require('body-parser')
     const cookieSession = require('cookie-session')
+    app = express()
+    router = express.Router()
     app.use(bodyParser.urlencoded({ extended: true }))
     app.use(cookieSession({ keys: ['secret'] }))
+  })
+
+  afterEach(() => {
+    app = undefined
+    router = undefined
   })
 
   test('@routeHandler(path, method)', async () => {
@@ -197,6 +201,40 @@ describe('Decorators', function testDecorators() {
     const res = await request(app).get('/')
     expect(wasRun).toBe(true)
   })
+
+  test('@validate(...dataProps)', async () => {
+    const { controller, routeHandler, validate } = require('../routes')
+
+
+    @controller('', router)
+    class TestValidate {
+      static path = '/form'
+      static text = 'Valid data'
+      @routeHandler(TestValidate.path, 'post')
+      @validate('email', 'password')
+      post(req: any, res: any) {
+        res.send('Valid data')
+      }
+    }
+
+    app.use(router)
+
+    const noDataPost = await request(app).post(TestValidate.path)
+    expect(noDataPost.status).toEqual(422)
+
+    const missingDataPost = await request(app).post(TestValidate.path)
+      .type('form')
+      .send({ email: 'valid@email.com' })
+      .send({ password: null })
+    expect(missingDataPost.text).toMatch(/provide.*password/i)
+
+    const validPost = await request(app).post(TestValidate.path)
+      .type('form')
+      .send({ email: 'valid@email.com' })
+      .send({ password: 'validpassword' })
+    expect(validPost.status).toEqual(200)
+    expect(validPost.text).toMatch(TestValidate.text)
+  })
 })
 
 
@@ -214,14 +252,16 @@ describe('Decorators', function testDecorators() {
  * [X] Logout clears cookies
  * [X] Metadata
  * [X] Controller Class decorator
- * [x] Http method decorator
+ * [X] Http method decorator
  * [X] Use middleware
- * [] Auth decorator
- * [] Validate req body decorator
+ * [X] Validates correct data
+ * [X] Validate sends error
+ * [] Typecheck property descriptor parameter
  */
 
 /**
- * 1. Node executes our code.
+ * Decorators
+ * 1. Node executes code.
  * 2. Class definition read in - decorators executed
  * 3. Decorators associate route configuration info with method by using metadata
  * 4. All method decorators run
