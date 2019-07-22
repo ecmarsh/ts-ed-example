@@ -40,3 +40,11 @@ export async function post(req: RequestWithBody, res: Response) {
     res.send(`<p ${colorRed}>${message}</p>`)
   }
 }
+
+// @controller('/auth')
+// class LoginController {
+//   @routeHandler(login.path, HttpMethod.Get)
+//   getLogin(req: Request, res: Response) {
+//     login.get(req, res)
+//   }
+// }

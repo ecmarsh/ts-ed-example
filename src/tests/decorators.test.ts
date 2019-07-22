@@ -1,19 +1,23 @@
 import request from 'supertest'
+import express from 'express'
+import bodyParser from 'body-parser'
+import cookieSession from 'cookie-session'
 
+import { controller, routeHandler, validate, use, HttpMethod } from '../decorators'
 
 describe('Decorators', function testDecorators() {
+  /**
+   * A clean router instance to override controller.
+   * `app.use(router)` after setting up the test case.
+   */
+  let router: express.Router | undefined
   let app: any
-  /** A clean router instance for each test. `app.use(router)` */
-  let router: any
 
   beforeEach(() => {
-    const express = require('express')
-    const bodyParser = require('body-parser')
-    const cookieSession = require('cookie-session')
     app = express()
     router = express.Router()
     app.use(bodyParser.urlencoded({ extended: true }))
-    app.use(cookieSession({ keys: ['secret'] }))
+    app.use(cookieSession({ keys: ['secret', 'keys'] }))
   })
 
   afterEach(() => {
@@ -22,12 +26,10 @@ describe('Decorators', function testDecorators() {
   })
 
   test('@routeHandler(path, method)', async () => {
-    const { controller, routeHandler } = require('../routes')
-
     @controller('', router)
     class TestRouteHandler {
       static text = 'Route binded!'
-      @routeHandler('/test', 'get')
+      @routeHandler('/test', HttpMethod.Get)
       getText(req: any, res: any) {
         res.send(TestRouteHandler.text)
       }
@@ -39,12 +41,10 @@ describe('Decorators', function testDecorators() {
   })
 
   test('@controller(prefixRoute?, routerOveride?)', async () => {
-    const { controller, routeHandler } = require('../routes')
-
     @controller('/root', router)
     class TestController {
       static text = 'Controller controlled!'
-      @routeHandler('/auth', 'get')
+      @routeHandler('/auth', HttpMethod.Get)
       getText(req: any, res: any) {
         res.send(TestController.text)
       }
@@ -57,8 +57,6 @@ describe('Decorators', function testDecorators() {
 
 
   test('@use(middleware)', async () => {
-    const { controller, routeHandler, use } = require('../routes')
-
     let wasRun = false
     function middleware(req: any, res: any, next: any) {
       wasRun = true
@@ -68,7 +66,7 @@ describe('Decorators', function testDecorators() {
     @controller('', router)
     class TestUse {
       @use(middleware)
-      @routeHandler('/', 'get')
+      @routeHandler('/')
       getTest(req: any, res: any, next: any) {
         res.send('Should have ran middleware')
       }
@@ -82,14 +80,12 @@ describe('Decorators', function testDecorators() {
   })
 
   test('@validate(...dataProps)', async () => {
-    const { controller, routeHandler, validate } = require('../routes')
-
     @controller('', router)
     class TestValidate {
       static path = '/form'
       static text = 'Valid data'
 
-      @routeHandler(TestValidate.path, 'post')
+      @routeHandler(TestValidate.path, HttpMethod.Post)
       @validate('email', 'password')
       post(req: any, res: any) {
         res.send(TestValidate.text)
