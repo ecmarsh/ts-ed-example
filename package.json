@@ -11,8 +11,9 @@
     "test:watch": "jest --watch",
     "test:cover": "jest --coverage",
     "test:debug": "node --inspect-brk ./node_modules/jest/bin/jest.js --runInBand",
+    "test:config": "jest --showConfig",
     "coverage": "npm run test:coverage && open coverage/lcov-report/index.html",
-    "clean": "rm -rf dist && tsc",
+    "clean": "rm -rf dist && jest --clearCache && tsc",
     "upgrade": "rm -rf node-modules && rm package-lock.json && npm install"
   },
   "repository": {
