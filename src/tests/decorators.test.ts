@@ -1,17 +1,17 @@
+/**
+ * @jest-environment node
+ */
+
 import request from 'supertest'
 import express from 'express'
+import bodyParser from 'body-parser'
+import cookieSession from 'cookie-session'
+
+import { controller, routeHandler, validate, use, HttpMethod } from '../decorators'
 
 
 describe('Decorators', function testDecorators() {
-  const bodyParser = require('body-parser')
-  const cookieSession = require('cookie-session')
-  const { controller, routeHandler, validate, use, HttpMethod } = require('../decorators')
-
-  /**
-   * A clean router instance to override controller.
-   * `app.use(router)` after setting up the test case.
-   */
-  let router: express.Router | undefined
+  let router: any
   let app: any
 
   beforeEach(() => {
@@ -22,8 +22,7 @@ describe('Decorators', function testDecorators() {
   })
 
   afterEach(() => {
-    app = undefined
-    router = undefined
+    jest.resetModules()
   })
 
   test('@routeHandler(path, method)', async function testRouteHandler() {

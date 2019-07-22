@@ -1,6 +1,6 @@
 import 'reflect-metadata' // Introduces 'Reflect' into global scope
 
-import { AppRouter } from '../routes'
+import { AppRouter } from '../AppRouter'
 import { Decorator, HttpMethod, MetaKeys, RequestHandler } from './types'
 import { styleInline } from '../utils'
 

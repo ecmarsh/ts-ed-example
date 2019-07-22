@@ -1,6 +1,6 @@
 import { Router, RequestHandler, Request, Response, NextFunction } from 'express'
 
-/** Types from express module. */
+/** Contain types in this directory */
 export { Router, RequestHandler, Request, Response, NextFunction }
 
 /**
