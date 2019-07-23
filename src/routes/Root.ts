@@ -1,9 +1,10 @@
+import { AppRouter } from '../AppRouter'
 import { controller, routeHandler, HttpMethod } from '../decorators'
 import { makeAnchor, minify } from '../utils'
 import { Request, Response } from './types'
 
 
-@controller()
+@controller(AppRouter.getInstance())
 export class Root {
   private static indexView = () => `
 			<div>

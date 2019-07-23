@@ -26,7 +26,7 @@ describe('Decorators', function testDecorators() {
   })
 
   test('@routeHandler(path, method)', async function testRouteHandler() {
-    @controller('', router)
+    @controller(router)
     class TestRouteHandler {
       static text = 'Route binded!'
       @routeHandler('/test', HttpMethod.Get)
@@ -40,8 +40,8 @@ describe('Decorators', function testDecorators() {
     expect(res.text).toMatch(TestRouteHandler.text)
   })
 
-  test('@controller(prefixRoute?, routerOveride?)', async function testController() {
-    @controller('/root', router)
+  test('@controller(router, prefixRoute?)', async function testController() {
+    @controller(router, '/root')
     class TestController {
       static text = 'Controller controlled!'
       @routeHandler('/auth', HttpMethod.Get)
@@ -59,12 +59,14 @@ describe('Decorators', function testDecorators() {
   test('@use(middleware)', async function testUseDecorator() {
     let wasRun = false
 
+    const spy = jest.fn()
+
     function middleware(req: any, res: any, next: any) {
       wasRun = true
       next()
     }
 
-    @controller('', router)
+    @controller(router)
     class TestUse {
       @use(middleware)
       @routeHandler('/', HttpMethod.Get)
@@ -81,7 +83,7 @@ describe('Decorators', function testDecorators() {
   })
 
   test('@validate(...dataProps)', async function testValidator() {
-    @controller('', router)
+    @controller(router)
     class TestValidate {
       static path = '/form'
       static text = 'Valid data'

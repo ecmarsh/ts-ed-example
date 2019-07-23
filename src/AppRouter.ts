@@ -4,11 +4,15 @@ class AppRouter {
   private static instance: Express.Router | null = null
 
   public static getInstance() {
-    if (!AppRouter.instance) {
-      AppRouter.instance = Express.Router()
+    if (!this.isInitialized()) {
+      this.instance = Express.Router()
     }
 
     return AppRouter.instance
+  }
+
+  public static isInitialized() {
+    return this.instance != null
   }
 }
 

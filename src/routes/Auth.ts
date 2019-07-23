@@ -1,8 +1,9 @@
+import { AppRouter } from '../AppRouter'
 import { makeInput, makeAnchor, minify } from '../utils'
 import { controller, routeHandler, validate, HttpMethod } from '../decorators'
 import { Request, Response, CookieSessionObject } from './types'
 
-@controller()
+@controller(AppRouter.getInstance())
 export class Auth {
   static loginForm = (): string => `
     <form method="POST">

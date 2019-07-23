@@ -4,6 +4,10 @@ import { queries } from '@testing-library/dom'
 import { app } from '../app'
 import { clearDocument, mount } from './testUtils'
 
+beforeEach(() => {
+  jest.resetModules()
+})
+
 describe('Root', function testIndexPath() {
   test('GET Request', async () => {
     const res = await request(app).get('/')
@@ -134,7 +138,6 @@ describe('Logout', function testLogout() {
     // 2b. Assert logged in by checking protected route.
     let guarded = await agent.get('/guarded')
     expect(guarded.status).toEqual(200)
-    expect(res.text).toMatch(/welcome.*user/i)
 
     // 3. Do the logout.
     const logout = await agent.get('/logout')

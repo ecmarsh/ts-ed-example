@@ -1,3 +1,4 @@
+import { AppRouter } from '../AppRouter'
 import { controller, routeHandler, use, HttpMethod } from '../decorators'
 import { makeAnchor, minify, styleInline } from '../utils'
 import { Request, Response, NextFunction } from './types'
@@ -13,7 +14,7 @@ function requireAuth(req: Request, res: Response, next: NextFunction) {
   res.status(403).send(`Not permitted to this guarded route`)
 }
 
-@controller()
+@controller(AppRouter.getInstance())
 export class Guarded {
   private static guardedView = (): string => {
     const guardedMessage = `Welcome to guarded route, logged in user!`,

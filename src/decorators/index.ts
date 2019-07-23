@@ -52,7 +52,7 @@ export function use(...middlewares: RequestHandler[]): Decorator {
 
 /**
  * Validate method decorator. Defines the metadata to be validated.
- * @param {Array<string>} [props] The list of properties to validate.
+ * @param {string[]} [props] The list of properties to validate.
  */
 export function validate(...props: string[]): Decorator {
   return function defineRequiredBodyProps(target, key, desc) {
@@ -95,10 +95,10 @@ function validateBodyProps(props: string[]): RequestHandler {
 
 /**
 * A Class decorator that adds route handlers to route.
-* @param {string} [pathPrefix] A leading route path, if applicable.
-* @param [router] An Express.Router instance that will override the default app router.
+* @param [router] An Express.Router instance to handle the route.
+* @param {string} [pathPrefix] An optional leading route path.
 */
-export function controller(pathPrefix: string = '', router = AppRouter.getInstance()) {
+export function controller(router = AppRouter.getInstance(), pathPrefix: string = '') {
   return function wireRouter(target: Function) {
     const { prototype } = target
 
